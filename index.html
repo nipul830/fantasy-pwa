@@ -1,28 +1,116 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Fantasy App</title>
+  <meta charset="UTF-8">
+  <title>Fantasy App OTP Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="manifest" href="manifest.json">
+
+  <!-- Firebase CDN (OTP compatible) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
   <style>
-    body { font-family: Arial; background:#f5f5f5; margin:0; }
-    .box { background:#fff; padding:20px; margin:20px; border-radius:10px; }
-    input, button { width:100%; padding:12px; margin-top:10px; }
-    button { background:#1e88e5; color:#fff; border:none; }
+    body {
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .box {
+      background: #020617;
+      padding: 20px;
+      border-radius: 10px;
+      width: 300px;
+      text-align: center;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+      border: none;
+    }
+    button {
+      background: #22c55e;
+      font-weight: bold;
+    }
+    #otpBox { display: none; }
   </style>
 </head>
+
 <body>
 
 <div class="box">
-  <h2>Login</h2>
-  <input placeholder="Mobile Number">
-  <button onclick="goOtp()">Send OTP</button>
+  <h2>OTP Login</h2>
+
+  <div id="phoneBox">
+    <input type="tel" id="phone" placeholder="Enter Mobile Number">
+    <div id="recaptcha-container"></div>
+    <button onclick="sendOTP()">Send OTP</button>
+  </div>
+
+  <div id="otpBox">
+    <input type="text" id="otp" placeholder="Enter OTP">
+    <button onclick="verifyOTP()">Verify OTP</button>
+  </div>
 </div>
 
 <script>
-function goOtp(){
-  window.location.href = "otp.html";
-}
+  // 🔥 Firebase Config (tumhara)
+  const firebaseConfig = {
+    apiKey: "AIzaSyDFkzjfAZzIvdvKaBD4HBCoZ0EZRtkZjUA",
+    authDomain: "fantasy-app-44449.firebaseapp.com",
+    projectId: "fantasy-app-44449",
+    storageBucket: "fantasy-app-44449.appspot.com",
+    messagingSenderId: "230270672874",
+    appId: "1:230270672874:web:8cc9473ae8e253207edc93"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  // reCAPTCHA
+  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
+    'recaptcha-container',
+    { size: 'normal' }
+  );
+
+  let confirmationResult;
+
+  function sendOTP() {
+    let phone = document.getElementById("phone").value;
+    if (phone.length < 10) {
+      alert("Enter valid number");
+      return;
+    }
+    phone = "+91" + phone;
+
+    auth.signInWithPhoneNumber(phone, window.recaptchaVerifier)
+      .then((result) => {
+        confirmationResult = result;
+        document.getElementById("phoneBox").style.display = "none";
+        document.getElementById("otpBox").style.display = "block";
+        alert("OTP Sent");
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  }
+
+  function verifyOTP() {
+    let code = document.getElementById("otp").value;
+    confirmationResult.confirm(code)
+      .then(() => {
+        alert("Login Success");
+        document.body.innerHTML = "<h2>Welcome to Fantasy App</h2>";
+      })
+      .catch(() => {
+        alert("Wrong OTP");
+      });
+  }
 </script>
 
 </body>
