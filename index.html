@@ -2,137 +2,65 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Fantasy App Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fantasy App - Login</title>
 
   <style>
     body {
       background: #0f172a;
+      color: white;
       font-family: Arial, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      margin: 0;
-      color: #fff;
     }
-
-    .box {
+    .card {
       background: #020617;
-      padding: 25px;
+      padding: 20px;
+      border-radius: 12px;
       width: 300px;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.6);
       text-align: center;
     }
-
-    h2 {
-      margin-bottom: 15px;
-    }
-
     input {
       width: 100%;
       padding: 10px;
       margin: 6px 0;
-      border-radius: 5px;
+      border-radius: 6px;
       border: none;
-      outline: none;
     }
-
     button {
       width: 100%;
       padding: 10px;
       margin-top: 8px;
+      border-radius: 6px;
       border: none;
-      border-radius: 5px;
-      font-weight: bold;
       cursor: pointer;
     }
-
-    .login { background: #22c55e; }
-    .signup { background: #3b82f6; }
-    .google { background: #ea4335; color: #fff; }
-
-    #msg {
-      margin-top: 10px;
-      font-size: 14px;
-      min-height: 20px;
-    }
+    .green { background: #22c55e; }
+    .blue { background: #2563eb; }
+    .red { background: #ef4444; }
   </style>
 </head>
-
 <body>
 
-  <div class="box">
-    <h2>Fantasy App</h2>
+<div class="card">
+  <h2>Fantasy App</h2>
 
-    <input type="email" id="email" placeholder="Email" />
-    <input type="password" id="password" placeholder="Password" />
+  <input id="email" type="email" placeholder="Email" />
+  <input id="password" type="password" placeholder="Password" />
 
-    <button class="login" onclick="login()">Sign In</button>
-    <button class="signup" onclick="signup()">Sign Up</button>
+  <button class="green" onclick="signup()">Sign Up</button>
+  <button class="blue" onclick="login()">Login</button>
 
-    <hr style="margin:15px 0;border-color:#1e293b;">
+  <hr style="margin:12px 0">
 
-    <button class="google" onclick="googleLogin()">Login with Google</button>
+  <button class="blue" onclick="googleLogin()">Login with Google</button>
+  <button class="red" onclick="logout()">Logout</button>
 
-    <div id="msg"></div>
-  </div>
+  <p id="msg"></p>
+</div>
 
-  <!-- Firebase -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-    import {
-      getAuth,
-      signInWithEmailAndPassword,
-      createUserWithEmailAndPassword,
-      GoogleAuthProvider,
-      signInWithRedirect
-    } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDFkzjfAZzIvdvKaBD4HBCoZ0EZRtkZjUA",
-      authDomain: "fantasy-app-44449.firebaseapp.com",
-      projectId: "fantasy-app-44449",
-      appId: "1:230270672874:web:8cc9473ae8e253207edc93"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-
-    window.login = () => {
-      const email = document.getElementById("email").value;
-      const pass = document.getElementById("password").value;
-
-      signInWithEmailAndPassword(auth, email, pass)
-        .then(user => {
-          document.getElementById("msg").innerText =
-            "Login successful: " + user.user.email;
-        })
-        .catch(err => {
-          document.getElementById("msg").innerText = err.message;
-        });
-    };
-
-    window.signup = () => {
-      const email = document.getElementById("email").value;
-      const pass = document.getElementById("password").value;
-
-      createUserWithEmailAndPassword(auth, email, pass)
-        .then(user => {
-          document.getElementById("msg").innerText =
-            "Signup successful: " + user.user.email;
-        })
-        .catch(err => {
-          document.getElementById("msg").innerText = err.message;
-        });
-    };
-
-    window.googleLogin = () => {
-      signInWithRedirect(auth, provider);
-    };
-  </script>
-
+<script type="module" src="app.js"></script>
 </body>
 </html>
