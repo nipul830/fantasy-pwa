@@ -1,17 +1,59 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Fantasy App OTP Login</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <title>Fantasy App - Google Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Firebase CDN (OTP compatible) -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { 
+      getAuth, 
+      GoogleAuthProvider, 
+      signInWithPopup, 
+      signOut 
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    // 🔥 Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFkzjfAZzIvdvKaBD4HBCoZ0EZRtkZjUA",
+      authDomain: "fantasy-app-44449.firebaseapp.com",
+      projectId: "fantasy-app-44449",
+      storageBucket: "fantasy-app-44449.appspot.com",
+      messagingSenderId: "230270672874",
+      appId: "1:230270672874:web:8cc9473ae8e253207edc93"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    // Login
+    window.googleLogin = async () => {
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+
+        document.getElementById("status").innerHTML =
+          `✅ Login Success <br>
+           Name: ${user.displayName}<br>
+           Email: ${user.email}`;
+      } catch (error) {
+        alert(error.message);
+      }
+    };
+
+    // Logout
+    window.logout = async () => {
+      await signOut(auth);
+      document.getElementById("status").innerHTML = "❌ Logged out";
+    };
+  </script>
 
   <style>
     body {
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       background: #0f172a;
       color: white;
       display: flex;
@@ -22,96 +64,43 @@
     .box {
       background: #020617;
       padding: 20px;
-      border-radius: 10px;
-      width: 300px;
+      border-radius: 12px;
       text-align: center;
-    }
-    input, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 5px;
-      border: none;
+      width: 300px;
     }
     button {
-      background: #22c55e;
-      font-weight: bold;
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
     }
-    #otpBox { display: none; }
+    .login {
+      background: #22c55e;
+    }
+    .logout {
+      background: #ef4444;
+    }
   </style>
 </head>
-
 <body>
 
-<div class="box">
-  <h2>OTP Login</h2>
+  <div class="box">
+    <h2>Fantasy App</h2>
+    <p>Google Login</p>
 
-  <div id="phoneBox">
-    <input type="tel" id="phone" placeholder="Enter Mobile Number">
-    <div id="recaptcha-container"></div>
-    <button onclick="sendOTP()">Send OTP</button>
+    <button class="login" onclick="googleLogin()">
+      Login with Google
+    </button>
+
+    <button class="logout" onclick="logout()">
+      Logout
+    </button>
+
+    <p id="status" style="margin-top:15px;"></p>
   </div>
-
-  <div id="otpBox">
-    <input type="text" id="otp" placeholder="Enter OTP">
-    <button onclick="verifyOTP()">Verify OTP</button>
-  </div>
-</div>
-
-<script>
-  // 🔥 Firebase Config (tumhara)
-  const firebaseConfig = {
-    apiKey: "AIzaSyDFkzjfAZzIvdvKaBD4HBCoZ0EZRtkZjUA",
-    authDomain: "fantasy-app-44449.firebaseapp.com",
-    projectId: "fantasy-app-44449",
-    storageBucket: "fantasy-app-44449.appspot.com",
-    messagingSenderId: "230270672874",
-    appId: "1:230270672874:web:8cc9473ae8e253207edc93"
-  };
-
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-
-  // reCAPTCHA
-  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
-    'recaptcha-container',
-    { size: 'normal' }
-  );
-
-  let confirmationResult;
-
-  function sendOTP() {
-    let phone = document.getElementById("phone").value;
-    if (phone.length < 10) {
-      alert("Enter valid number");
-      return;
-    }
-    phone = "+91" + phone;
-
-    auth.signInWithPhoneNumber(phone, window.recaptchaVerifier)
-      .then((result) => {
-        confirmationResult = result;
-        document.getElementById("phoneBox").style.display = "none";
-        document.getElementById("otpBox").style.display = "block";
-        alert("OTP Sent");
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
-  }
-
-  function verifyOTP() {
-    let code = document.getElementById("otp").value;
-    confirmationResult.confirm(code)
-      .then(() => {
-        alert("Login Success");
-        document.body.innerHTML = "<h2>Welcome to Fantasy App</h2>";
-      })
-      .catch(() => {
-        alert("Wrong OTP");
-      });
-  }
-</script>
 
 </body>
 </html>
