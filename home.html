@@ -2,14 +2,39 @@
 <html>
 <head>
   <title>Home</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body style="font-family:Arial">
+<body style="background:#0f172a;color:white;text-align:center;padding-top:50px">
 
-<div style="padding:20px">
-  <h2>Welcome to Fantasy App</h2>
-  <p>Login successful 🎉</p>
-</div>
+  <h1>Welcome 🎉</h1>
+  <p>You are logged in</p>
+
+  <button onclick="logout()" style="padding:12px 20px;font-size:16px">
+    Logout
+  </button>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFkzjfAZzIvdvKaBD4HBCoZ0EZRtkZjUA",
+      authDomain: "fantasy-app-44449.firebaseapp.com",
+      projectId: "fantasy-app-44449",
+      storageBucket: "fantasy-app-44449.appspot.com",
+      messagingSenderId: "230270672874",
+      appId: "1:230270672874:web:8cc9473ae8e253207edc93"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.logout = function () {
+      signOut(auth).then(() => {
+        window.location.href = "index.html";
+      });
+    };
+  </script>
 
 </body>
 </html>
