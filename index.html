@@ -2,26 +2,98 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Fantasy App - Google Login</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fantasy App Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <!-- Firebase SDK -->
+  <style>
+    body {
+      background: #0f172a;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: #fff;
+    }
+
+    .box {
+      background: #020617;
+      padding: 25px;
+      width: 300px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 15px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 6px 0;
+      border-radius: 5px;
+      border: none;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .login { background: #22c55e; }
+    .signup { background: #3b82f6; }
+    .google { background: #ea4335; color: #fff; }
+
+    #msg {
+      margin-top: 10px;
+      font-size: 14px;
+      min-height: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="box">
+    <h2>Fantasy App</h2>
+
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+
+    <button class="login" onclick="login()">Sign In</button>
+    <button class="signup" onclick="signup()">Sign Up</button>
+
+    <hr style="margin:15px 0;border-color:#1e293b;">
+
+    <button class="google" onclick="googleLogin()">Login with Google</button>
+
+    <div id="msg"></div>
+  </div>
+
+  <!-- Firebase -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { 
-      getAuth, 
-      GoogleAuthProvider, 
-      signInWithPopup, 
-      signOut 
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      GoogleAuthProvider,
+      signInWithRedirect
+    } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 
-    // 🔥 Your Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyDFkzjfAZzIvdvKaBD4HBCoZ0EZRtkZjUA",
       authDomain: "fantasy-app-44449.firebaseapp.com",
       projectId: "fantasy-app-44449",
-      storageBucket: "fantasy-app-44449.appspot.com",
-      messagingSenderId: "230270672874",
       appId: "1:230270672874:web:8cc9473ae8e253207edc93"
     };
 
@@ -29,78 +101,38 @@
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
-    // Login
-    window.googleLogin = async () => {
-      try {
-        const result = await signInWithPopup(auth, provider);
-        const user = result.user;
+    window.login = () => {
+      const email = document.getElementById("email").value;
+      const pass = document.getElementById("password").value;
 
-        document.getElementById("status").innerHTML =
-          `✅ Login Success <br>
-           Name: ${user.displayName}<br>
-           Email: ${user.email}`;
-      } catch (error) {
-        alert(error.message);
-      }
+      signInWithEmailAndPassword(auth, email, pass)
+        .then(user => {
+          document.getElementById("msg").innerText =
+            "Login successful: " + user.user.email;
+        })
+        .catch(err => {
+          document.getElementById("msg").innerText = err.message;
+        });
     };
 
-    // Logout
-    window.logout = async () => {
-      await signOut(auth);
-      document.getElementById("status").innerHTML = "❌ Logged out";
+    window.signup = () => {
+      const email = document.getElementById("email").value;
+      const pass = document.getElementById("password").value;
+
+      createUserWithEmailAndPassword(auth, email, pass)
+        .then(user => {
+          document.getElementById("msg").innerText =
+            "Signup successful: " + user.user.email;
+        })
+        .catch(err => {
+          document.getElementById("msg").innerText = err.message;
+        });
+    };
+
+    window.googleLogin = () => {
+      signInWithRedirect(auth, provider);
     };
   </script>
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .box {
-      background: #020617;
-      padding: 20px;
-      border-radius: 12px;
-      text-align: center;
-      width: 300px;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    .login {
-      background: #22c55e;
-    }
-    .logout {
-      background: #ef4444;
-    }
-  </style>
-</head>
-<body>
-
-  <div class="box">
-    <h2>Fantasy App</h2>
-    <p>Google Login</p>
-
-    <button class="login" onclick="googleLogin()">
-      Login with Google
-    </button>
-
-    <button class="logout" onclick="logout()">
-      Logout
-    </button>
-
-    <p id="status" style="margin-top:15px;"></p>
-  </div>
 
 </body>
 </html>
